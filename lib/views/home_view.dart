@@ -42,24 +42,27 @@ class HomeView extends StatelessWidget {
         ],
       ),
       body: Observer(
-        builder:
-            (_) => ListView.builder(
-              itemCount: _itensMock.length,
-              itemBuilder: (context, index) {
-                final item = _itensMock[index];
-                return ListTile(
-                  title: Text(item.nome),
-                  trailing: IconButton(
-                    icon: Icon(
-                      favoritesViewModel.ehFavorito(item)
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                    ),
-                    onPressed: () => favoritesViewModel.alternarFavorito(item),
+        builder: (_) {
+          favoritesViewModel
+              .favoritos; // Lê o observable para que o Observer reaja
+          return ListView.builder(
+            itemCount: _itensMock.length,
+            itemBuilder: (context, index) {
+              final item = _itensMock[index];
+              return ListTile(
+                title: Text(item.nome),
+                trailing: IconButton(
+                  icon: Icon(
+                    favoritesViewModel.ehFavorito(item)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                   ),
-                );
-              },
-            ),
+                  onPressed: () => favoritesViewModel.alternarFavorito(item),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

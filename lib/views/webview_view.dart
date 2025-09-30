@@ -13,39 +13,54 @@ class WebViewView extends StatefulWidget {
 
 class _WebViewViewState extends State<WebViewView> {
   late final WebViewController _controller;
+  bool _isInitialized = false; // Controle de inicialização
 
   @override
   void initState() {
     super.initState();
+    _initializeController();
+  }
 
-    late final PlatformWebViewControllerCreationParams params;
-    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      params = WebKitWebViewControllerCreationParams(
-        allowsInlineMediaPlayback: true,
-        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-      );
-    } else {
-      params = const PlatformWebViewControllerCreationParams();
+  void _initializeController() {
+    if (!_isInitialized) {
+      late final PlatformWebViewControllerCreationParams params;
+      if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+        params = WebKitWebViewControllerCreationParams(
+          allowsInlineMediaPlayback: true,
+          mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+        );
+      } else {
+        params = const PlatformWebViewControllerCreationParams();
+      }
+
+      _controller =
+          WebViewController.fromPlatformCreationParams(params)
+            ..setJavaScriptMode(JavaScriptMode.unrestricted)
+            ..addJavaScriptChannel(
+              'Notificador',
+              onMessageReceived: (JavaScriptMessage mensagem) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(mensagem.message)));
+              },
+            )
+            ..loadRequest(Uri.parse('https://flutter.dev'));
+
+      if (_controller.platform is AndroidWebViewController) {
+        AndroidWebViewController.enableDebugging(true);
+        (_controller.platform as AndroidWebViewController)
+            .setMediaPlaybackRequiresUserGesture(false);
+      }
+
+      _isInitialized = true;
     }
+  }
 
-    _controller =
-        WebViewController.fromPlatformCreationParams(params)
-          ..setJavaScriptMode(JavaScriptMode.unrestricted)
-          ..addJavaScriptChannel(
-            'Notificador',
-            onMessageReceived: (JavaScriptMessage mensagem) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(mensagem.message)));
-            },
-          )
-          ..loadRequest(Uri.parse('https://flutter.dev'));
-
-    if (_controller.platform is AndroidWebViewController) {
-      AndroidWebViewController.enableDebugging(true);
-      (_controller.platform as AndroidWebViewController)
-          .setMediaPlaybackRequiresUserGesture(false);
-    }
+  @override
+  void dispose() {
+    // Limpa o controller para evitar reutilização inadequada
+    _controller.clearCache();
+    super.dispose();
   }
 
   @override
@@ -55,10 +70,13 @@ class _WebViewViewState extends State<WebViewView> {
         title: const Text('WebView'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/inicio'),
+          onPressed: () => context.go('/inicio'), // Volta para a tela inicial
         ),
       ),
-      body: WebViewWidget(controller: _controller),
+      body:
+          _isInitialized
+              ? WebViewWidget(controller: _controller)
+              : const Center(child: CircularProgressIndicator()),
     );
   }
 }

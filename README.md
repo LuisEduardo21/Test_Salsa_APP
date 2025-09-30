@@ -1,16 +1,33 @@
-# test_salsa_app
+# Desafio Técnico Flutter
 
-A new Flutter project.
+Este é um aplicativo Flutter simples construído conforme os requisitos do desafio técnico.
 
-## Getting Started
+### Requisitos
 
-This project is a starting point for a Flutter application.
+- SDK Flutter versão 3.29.0
+- SDK Dart
 
-A few resources to get you started if this is your first Flutter project:
+### Como Executar
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Clone o repositório.
+2. Entre na pasta do projeto com o comando: `cd test_salsa_app`.
+3. Execute `flutter pub get` para instalar as dependências.
+4. Execute `flutter packages pub run build_runner build --delete-conflicting-outputs` para gerar o código MobX e Hive.
+5. Execute `flutter run` para iniciar o app.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Funcionalidades
+
+- Tela de Login mockada com persistência usando Hive.
+- Tela Inicial com itens mockados e favoritos persistidos.
+- Tela WebView com comunicação JS para Flutter (exemplo: postMessage para o canal 'Notificador' exibe um snackbar).
+- Tela de Configurações para alternar tema e exibir info do usuário.
+
+### Estrutura
+
+- `models/`: Modelos de dados com adaptadores Hive.
+- `viewmodels/`: Lógica de negócios com MobX.
+- `services/`: Serviços como armazenamento.
+- `views/`: Telas de interface.
+
+O app lembra o estado de login, favoritos e tema usando Hive.
+Para testar a comunicação JS da WebView, injete JS como `window.Notificador.postMessage('Olá do JS');` (nota: flutter.dev pode não permitir; substitua a URL se necessário).

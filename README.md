@@ -29,5 +29,4 @@ Este é um aplicativo Flutter simples construído conforme os requisitos do desa
 - `services/`: Serviços como armazenamento.
 - `views/`: Telas de interface.
 
-O app lembra o estado de login, favoritos e tema usando Hive.
-Para testar a comunicação JS da WebView, injete JS como `window.Notificador.postMessage('Olá do JS');` 
+

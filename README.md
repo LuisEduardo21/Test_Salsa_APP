@@ -30,4 +30,4 @@ Este é um aplicativo Flutter simples construído conforme os requisitos do desa
 - `views/`: Telas de interface.
 
 O app lembra o estado de login, favoritos e tema usando Hive.
-Para testar a comunicação JS da WebView, injete JS como `window.Notificador.postMessage('Olá do JS');` (nota: flutter.dev pode não permitir; substitua a URL se necessário).
+Para testar a comunicação JS da WebView, injete JS como `window.Notificador.postMessage('Olá do JS');` 

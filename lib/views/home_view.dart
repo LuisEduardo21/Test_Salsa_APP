@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../models/item.dart';
 import '../viewmodels/auth_viewmodel.dart';
 import '../viewmodels/favorites_viewmodel.dart';
+import '../viewmodels/theme_viewmodel.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
@@ -19,48 +20,100 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final favoritesViewModel = GetIt.I<FavoritesViewModel>();
     final authViewModel = GetIt.I<AuthViewModel>();
+    final themeViewModel = GetIt.I<ThemeViewModel>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Início'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => context.go('/configuracoes'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.web),
-            onPressed: () => context.go('/webview'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await authViewModel.fazerLogout();
-              context.go('/login');
-            },
-          ),
-        ],
-      ),
       body: Observer(
         builder: (_) {
-          favoritesViewModel
-              .favoritos; // Lê o observable para que o Observer reaja
-          return ListView.builder(
-            itemCount: _itensMock.length,
-            itemBuilder: (context, index) {
-              final item = _itensMock[index];
-              return ListTile(
-                title: Text(item.nome),
-                trailing: IconButton(
-                  icon: Icon(
-                    favoritesViewModel.ehFavorito(item)
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                  ),
-                  onPressed: () => favoritesViewModel.alternarFavorito(item),
+          final isDarkMode = themeViewModel.modoTema == ThemeMode.dark;
+          final backgroundColor = isDarkMode ? Colors.grey[900] : Colors.white;
+          final textColor = isDarkMode ? Colors.white : Colors.black87;
+          final iconColor = isDarkMode ? Colors.white70 : Colors.blueAccent;
+          final borderColor = isDarkMode ? Colors.white24 : Colors.blueAccent;
+
+          return Container(
+            color: backgroundColor,
+            child: Column(
+              children: [
+                // AppBar Estilizado
+                AppBar(
+                  title: Text('Início', style: TextStyle(color: textColor)),
+                  backgroundColor: backgroundColor,
+                  elevation: 0,
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.settings, color: iconColor),
+                      onPressed: () => context.go('/configuracoes'),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.web, color: iconColor),
+                      onPressed: () => context.go('/webview'),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.logout, color: iconColor),
+                      onPressed: () async {
+                        await authViewModel.fazerLogout();
+                        context.go('/login');
+                      },
+                    ),
+                  ],
                 ),
-              );
-            },
+                // Corpo com Lista
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Observer(
+                      builder: (_) {
+                        favoritesViewModel
+                            .favoritos; // Lê o observable para reatividade
+                        return ListView.builder(
+                          itemCount: _itensMock.length,
+                          itemBuilder: (context, index) {
+                            final item = _itensMock[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 4.0,
+                              ),
+                              child: Card(
+                                color: (backgroundColor ?? Colors.white).withOpacity(0.1),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  side: BorderSide(
+                                    color: borderColor.withOpacity(0.3),
+                                  ),
+                                ),
+                                elevation: 2.0,
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.all(16.0),
+                                  title: Text(
+                                    item.nome,
+                                    style: TextStyle(color: textColor),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: Icon(
+                                      favoritesViewModel.ehFavorito(item)
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color:
+                                          favoritesViewModel.ehFavorito(item)
+                                              ? Colors.red
+                                              : iconColor,
+                                    ),
+                                    onPressed:
+                                        () => favoritesViewModel
+                                            .alternarFavorito(item),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),

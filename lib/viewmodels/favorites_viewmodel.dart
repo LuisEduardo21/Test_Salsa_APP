@@ -21,6 +21,7 @@ abstract class _FavoritesViewModel with Store {
   @action
   Future<void> _carregarFavoritos() async {
     final favoritosSalvos = _armazenamento.obter('favoritos');
+
     if (favoritosSalvos != null) {
       favoritos.addAll(favoritosSalvos.cast<Item>());
     }

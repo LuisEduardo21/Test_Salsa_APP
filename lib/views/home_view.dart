@@ -62,51 +62,48 @@ class HomeView extends StatelessWidget {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Observer(
-                      builder: (_) {
-                        favoritesViewModel
-                            .favoritos; // Lê o observable para reatividade
-                        return ListView.builder(
-                          itemCount: _itensMock.length,
-                          itemBuilder: (context, index) {
-                            final item = _itensMock[index];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
+                    child: ListView.builder(
+                      itemCount: _itensMock.length,
+                      itemBuilder: (context, index) {
+                        final item = _itensMock[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Card(
+                            key: ValueKey(item.id),
+                            color: (backgroundColor ?? Colors.white)
+                                .withOpacity(0.1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              side: BorderSide(
+                                color: borderColor.withOpacity(0.3),
                               ),
-                              child: Card(
-                                color: (backgroundColor ?? Colors.white).withOpacity(0.1),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  side: BorderSide(
-                                    color: borderColor.withOpacity(0.3),
-                                  ),
-                                ),
-                                elevation: 2.0,
-                                child: ListTile(
-                                  contentPadding: const EdgeInsets.all(16.0),
-                                  title: Text(
-                                    item.nome,
-                                    style: TextStyle(color: textColor),
-                                  ),
-                                  trailing: IconButton(
-                                    icon: Icon(
-                                      favoritesViewModel.ehFavorito(item)
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color:
-                                          favoritesViewModel.ehFavorito(item)
-                                              ? Colors.red
-                                              : iconColor,
+                            ),
+                            elevation: 2.0,
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(16.0),
+                              title: Text(
+                                item.nome,
+                                style: TextStyle(color: textColor),
+                              ),
+                              trailing: Observer(
+                                builder:
+                                    (_) => IconButton(
+                                      icon: Icon(
+                                        favoritesViewModel.ehFavorito(item)
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
+                                        color:
+                                            favoritesViewModel.ehFavorito(item)
+                                                ? Colors.red
+                                                : iconColor,
+                                      ),
+                                      onPressed:
+                                          () => favoritesViewModel
+                                              .alternarFavorito(item),
                                     ),
-                                    onPressed:
-                                        () => favoritesViewModel
-                                            .alternarFavorito(item),
-                                  ),
-                                ),
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         );
                       },
                     ),

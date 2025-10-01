@@ -22,11 +22,16 @@ Este é um aplicativo Flutter simples construído conforme os requisitos do desa
 - Tela WebView com comunicação JS para Flutter (exemplo: postMessage para o canal 'Notificador' exibe um snackbar).
 - Tela de Configurações para alternar tema e exibir info do usuário.
 
+### Credenciais de Teste
+
+Para testar o aplicativo, use as seguintes credenciais de login (apenas para fins de teste, não use em produção):
+
+- **Usuário**: `test`
+- **Senha**: `test`
+
 ### Estrutura
 
 - `models/`: Modelos de dados com adaptadores Hive.
 - `viewmodels/`: Lógica de negócios com MobX.
 - `services/`: Serviços como armazenamento.
 - `views/`: Telas de interface.
-
-
